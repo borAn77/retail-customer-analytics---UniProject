@@ -16,6 +16,11 @@ df_no_dup = df.drop_duplicates()
 df_clean = df_no_dup[~df_no_dup['InvoiceNo'].str.startswith('C')]
 df_clean = df_clean[(df_clean['Quantity'] > 0) & (df_clean['UnitPrice'] > 0)]
 df_clean = df_clean[~df_clean['StockCode'].isin(['POST', 'DOT', 'M', 'C2', 'D', 'S', 'BANK CHARGES', 'AMAZONFEE', 'CRUK', 'PADS', 'B'])].copy()
+
+# Remove uncancelled original orders of massive cancelled transactions (Manual Outlier Removal)
+cancelled_original_invoices = ['581483', '541431']
+df_clean = df_clean[~df_clean['InvoiceNo'].isin(cancelled_original_invoices)]
+
 df_clean['StockCode'] = df_clean['StockCode'].str.upper()
 
 print("Cleaned df size:", df_clean.shape)
